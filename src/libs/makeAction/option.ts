@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import InjectError from '@/libs/action/src/InjectError'
+import { InjectError } from '@/libs/action/src'
 
 // 限制返回值必须包含 data 或 msg
 export type ResponseData =
@@ -31,7 +31,7 @@ export async function injectUser(req: Request) {
   const user = await getUser(token)
   if (user) return { user } // action reject 必须返回一个对象，因为只有 key-value 这种形式才能作为注入数据
   // 主动抛出一个 InjectError, 插件会把构造参数交给 response 处理。你可以利用该特性来做鉴权
-  throw new InjectError({
+  throw new InjectError<ResponseData>({
     msg: '请先登录',
     error: true,
   })
